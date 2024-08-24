@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대회 운영장 관리 프로그램</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #219ce4;
+            color: white;
+            padding: 1px;
+            text-align : center;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            padding: 5px;
+        }
+
+        .team-buttons {
+            background-color: #f5f5f5;
+            margin-right: 10px;
+            width: 40%; /* 버튼 섹션의 너비를 전체의 2/5로 설정 */
+            display: flex;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .team-buttons button {
+            flex: 1 1 calc(25% - 10px); /* 버튼을 4열로 배치 */
+            padding: 10px;
+            background-color: #1fc5bd;
+            color: white;
+            border: none;
+            border-radius: 1px;
+            cursor: pointer;
+        }
+
+        .team-buttons button:nth-child(2n) {
+            margin-right: 0;  /* 각 줄의 마지막 버튼은 오른쪽 여백 제거 */
+        }
+
+        .team-buttons h3 {
+            flex-basis: 100%; /* 대학교 명칭이 있는 h3 요소가 버튼 위에 일정하게 정렬되도록 설정 */
+            margin-top: 5px;
+        }
+        .team-buttons button:hover {
+            background-color: #17a1a2;
+        }
+
+        .table-section {
+            background-color: #f5f5f5;
+            width: 80%; /* 테이블 섹션의 너비를 전체의 3/5로 설정 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #c7c3c3;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        footer {
+            background-color: #219ce4;
+            color: white;
+            text-align: center;
+            padding: 0.1px;
+        }
+
+        h2 {
+            font-weight: bold;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h3>경성대학교 미래자동차 자율주행 / 비행 경진대회</h3>
+        <h2>경기장 사용자 명단 / 대기자 명단</h2>
+    </header>
+
+    <main>
+        <section class="team-buttons">
+            <h3>한라대학교</h3>
+            <button onclick="addTeam('한라대', 'aMAP Innovater')">aMAP Innovater</button>
+            <button onclick="addTeam('한라대', 'aMAP Pineer')">aMAP Pineer</button>
+            <button onclick="addTeam('한라대', 'aMAP Strider')">aMAP Strider</button>
+            <button onclick="addTeam('한라대', 'aMAP Intruder')">aMAP Intruder</button>
+    
+            <h3>영남대학교</h3>
+            <button onclick="addTeam('영남대', 'maniac')">maniac</button>
+            <button onclick="addTeam('영남대', '악')">악</button>
+            <button onclick="addTeam('영남대', 'ICAS')">ICAS</button>
+    
+            <h3>교통대학교</h3>
+            <button onclick="addTeam('교통대', '인공지능카즈아')">인공지능카즈아</button>
+            <button onclick="addTeam('교통대', '인공지능카즈아1')">인공지능카즈아1</button>
+    
+            <h3>호남대학교</h3>
+            <button onclick="addTeam('호남대', 'HAND Lap1')">HAND Lap1</button>
+            <button onclick="addTeam('호남대', 'HAND Lap2')">HAND Lap2</button>
+    
+            <h3>홍익대학교</h3>
+            <button onclick="addTeam('홍익대', '양치킨2')">앙치킨2</button>
+            <button onclick="addTeam('홍익대', 'MOBI')">MOBI</button>
+            <button onclick="addTeam('홍익대', 'FPIZA')">FPIZA</button>
+            <button onclick="addTeam('홍익대', '양치킨B')">앙치킨B</button>
+    
+            <h3>경성대학교</h3>
+            <button onclick="addTeam('경성대', 'K-ACE1')">K-ACE1</button>
+            <button onclick="addTeam('경성대', 'K-ACE2')">K-ACE2</button>
+    
+            <h3>교통대학교</h3>
+            <button onclick="addTeam('교통대', 'M.A.D')">M.A.D</button>
+        </section>
+
+        <section class="table-section">
+            <h2>입장자 명단</h2>
+            <table id="entryList">
+                <thead>
+                    <tr>
+                        <th>학교 명</th>
+                        <th>팀 명</th>
+                        <th>입장 시간</th>
+                        <th>퇴장 예정 시간</th>
+                        <th>예정 시간까지 남은 시간</th>
+                        <th>퇴장</th> <!-- 새로운 열 추가 -->
+                    </tr>
+                </thead>                
+                <tbody>
+                    <!-- 입장자 명단 -->
+                </tbody>
+            </table>
+
+            <h2>대기자 명단</h2>
+            <table id="waitingList">
+                <thead>
+                    <tr>
+                        <th>학교 이름</th>
+                        <th>팀 이름</th>
+                        <th>대기 시작 시간</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 대기자 명단 -->
+                </tbody>
+            </table>
+        </section>
+
+        <div style="position: fixed; bottom: 10px; right: 10px;">
+            <button onclick="showMapPopup('팀별 맵 생성중입니다...')">맵 생성시간</button>
+            <button onclick="showMapPopup('맵 변경/조율 중입니다...')">맵 변경</button>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 경성대학교 기계자동차공학과</p>
+    </footer>
+
+    <script>
+        let teams = [];
+        let timers = {};  // 각 팀별 타이머를 관리하는 객체
+    
+        function addTeam(schoolName, teamName) {
+            // 명단에 이미 존재하는지 확인
+            const existingTeam = teams.find(team => team.school === schoolName && team.team === teamName);
+    
+            if (existingTeam) {
+                alert('이미 명단에 추가되어 있습니다.');
+                return;  // 함수 종료
+            }
+    
+            const currentTime = new Date();
+    
+            const teamData = {
+                school: schoolName,
+                team: teamName,
+                time: currentTime,
+                entryTime: null,
+                waitTime: null,
+                removalTime: null
+            };
+    
+            teams.push(teamData);
+            updateLists();
+        }
+    
+        function updateLists() {
+            teams.sort((a, b) => a.time - b.time);
+
+            const entryList = teams.slice(0, 5);
+            const waitingList = teams.slice(5);
+
+            const currentTime = new Date();
+
+            entryList.forEach((team, index) => {
+                if (!team.entryTime) {
+                    team.entryTime = currentTime;
+                    team.removalTime = new Date(currentTime.getTime() + 900000); // 15분 (900,000 밀리초)
+                }
+
+                // 타이머 초기화 및 재설정
+                clearInterval(timers[team.team]);  // 기존 타이머 제거
+                timers[team.team] = setInterval(() => updateRemainingTime(index, team.removalTime, team.team), 1000);
+            });
+
+            waitingList.forEach(team => {
+                if (!team.waitTime) {
+                    team.waitTime = currentTime;
+                }
+            });
+
+            populateEntryList(entryList);
+            populateList(waitingList, 'waitingList', 'waitTime');
+        }
+
+
+    
+        function populateEntryList(entryList) {
+            const tbody = document.querySelector(`#entryList tbody`);
+            tbody.innerHTML = '';
+
+            entryList.forEach((team, index) => {
+                const row = document.createElement('tr');
+
+                const schoolCell = document.createElement('td');
+                schoolCell.textContent = team.school;
+
+                const teamCell = document.createElement('td');
+                teamCell.textContent = team.team;
+
+                const entryTimeCell = document.createElement('td');
+                entryTimeCell.textContent = team.entryTime.toLocaleTimeString();
+
+                const removalTimeCell = document.createElement('td');
+                removalTimeCell.textContent = team.removalTime.toLocaleTimeString();
+
+                const remainingTimeCell = document.createElement('td');
+                remainingTimeCell.setAttribute('id', `remainingTime-${team.team}`);
+
+                // 퇴장 버튼 추가
+                const removeButtonCell = document.createElement('td');
+                const removeButton = document.createElement('button');
+                removeButton.textContent = '퇴장';
+                removeButton.onclick = () => removeTeam(team.team);
+                removeButtonCell.appendChild(removeButton);
+
+                row.appendChild(schoolCell);
+                row.appendChild(teamCell);
+                row.appendChild(entryTimeCell); // 입장 시간만 남김
+                row.appendChild(removalTimeCell);
+                row.appendChild(remainingTimeCell);
+                row.appendChild(removeButtonCell); // 퇴장 버튼 추가
+
+                tbody.appendChild(row);
+            });
+        }
+
+    
+        function removeTeam(teamName) {
+            // 팀을 명단에서 제거
+            teams = teams.filter(team => team.team !== teamName);
+            clearInterval(timers[teamName]);  // 타이머 제거
+            updateLists(); // 리스트 업데이트
+        }
+    
+        function updateRemainingTime(index, removalTime, teamName) {
+            const now = new Date();
+            const timeDifference = removalTime - now;
+
+            const remainingTimeCell = document.getElementById(`remainingTime-${teamName}`);
+            const row = remainingTimeCell.parentElement;  // 현재 행 가져오기
+
+            if (timeDifference > 0) {
+                const minutes = Math.floor(timeDifference / 60000);
+                const seconds = Math.floor((timeDifference % 60000) / 1000);
+                remainingTimeCell.textContent = `${minutes}분 ${seconds}초`;
+
+                // 총 시간 15분 (900,000 밀리초)
+                const totalTime = 900000;  
+                const warningTime = 120000;  // 2분 (120,000 밀리초)
+                
+                // 2분 이하 남았을 때 색상이 붉게 변함
+                if (timeDifference <= warningTime) {
+                    const percentTimeRemaining = timeDifference / warningTime;
+                    const redIntensity = Math.floor((1 - percentTimeRemaining) * 255);
+                    const greenBlueIntensity = Math.floor(percentTimeRemaining * 255);
+                    row.style.backgroundColor = `rgb(255, ${greenBlueIntensity}, ${greenBlueIntensity})`;
+                } else {
+                    // 2분 이상 남았을 때는 초기 상태 유지
+                    row.style.backgroundColor = '';
+                }
+
+            } else {
+                clearInterval(timers[teamName]);  // 시간이 초과되면 타이머 중지
+                remainingTimeCell.textContent = '다음 대기자 대기중';
+                row.style.backgroundColor = `rgb(28, 193, 235)`; // 초과 시 색상
+            }
+        }
+
+
+    
+        function populateList(list, listId, timeType) {
+            const tbody = document.querySelector(`#${listId} tbody`);
+            const thead = document.querySelector(`#${listId} thead`);
+            
+            // Ensure "대기 종료" header is present
+            thead.innerHTML = `
+                <tr>
+                    <th>학교 이름</th>
+                    <th>팀 이름</th>
+                    <th>${timeType === 'waitTime' ? '대기 시작 시간' : '신청 시간'}</th>
+                    <th>대기 종료</th> <!-- 대기 종료 헤더 추가 -->
+                </tr>
+            `;
+            
+            tbody.innerHTML = '';
+
+            list.forEach(team => {
+                const row = document.createElement('tr');
+
+                const schoolCell = document.createElement('td');
+                schoolCell.textContent = team.school;
+
+                const teamCell = document.createElement('td');
+                teamCell.textContent = team.team;
+
+                const entryOrWaitTimeCell = document.createElement('td');
+                entryOrWaitTimeCell.textContent = team[timeType].toLocaleTimeString();
+
+                // "대기 종료" 버튼 추가
+                const removeButtonCell = document.createElement('td');
+                const removeButton = document.createElement('button');
+                removeButton.textContent = '대기 종료';
+                removeButton.onclick = () => removeWaitingTeam(team.team);
+                removeButtonCell.appendChild(removeButton);
+
+                row.appendChild(schoolCell);
+                row.appendChild(teamCell);
+                row.appendChild(entryOrWaitTimeCell);
+                row.appendChild(removeButtonCell); // 대기 종료 버튼 추가
+
+                tbody.appendChild(row);
+            });
+        }
+
+
+        function removeWaitingTeam(teamName) {
+            // 대기자 명단에서 팀을 제거
+            teams = teams.filter(team => team.team !== teamName);
+            updateLists(); // 리스트 업데이트
+        }
+
+    
+        function manageEntryAndWaitingList() {
+            setInterval(() => {
+                const currentTime = new Date();
+                const entryList = teams.slice(0, 5);
+                const waitingList = teams.slice(5);
+    
+                if (waitingList.length > 0) {
+                    const eligibleEntryTeams = entryList.filter(team => {
+                        return currentTime >= team.removalTime;
+                    });
+    
+                    if (eligibleEntryTeams.length > 0) {
+                        const teamToMoveOut = eligibleEntryTeams.reduce((prev, current) => {
+                            return (current.removalTime > prev.removalTime) ? current : prev;
+                        });
+    
+                        // 입장자 명단에서 해당 팀을 제거
+                        teams = teams.filter(team => team !== teamToMoveOut);
+    
+                        const teamToMoveIn = waitingList.reduce((prev, current) => {
+                            return (current.waitTime < prev.waitTime) ? current : prev;
+                        });
+    
+                        // 대기자 명단에서 해당 팀을 제거하고 입장자 명단으로 이동
+                        teams = teams.filter(team => team !== teamToMoveIn);
+                        teamToMoveIn.entryTime = currentTime;
+                        teamToMoveIn.removalTime = new Date(currentTime.getTime() + 900000); // 15분
+                        teams.splice(teams.indexOf(teams[4]) + 1, 0, teamToMoveIn);
+    
+                        updateLists();
+                    }
+                }
+            }, 1000);
+        }
+
+        function showMapPopup(content) {
+            // 모달 생성
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '1000'; // 가장 위에 오도록
+
+            // 모달 내부 컨텐츠
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'white';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = '5px';
+            modalContent.style.textAlign = 'center';
+            modalContent.style.width = '50%';  // 모달 창의 너비 조절
+            modalContent.style.height = '50%';  // 모달 창의 높이 조절
+            modalContent.style.maxWidth = '1200Px';  // 최대 너비 설정
+            modalContent.style.maxHeight = '800px';  // 최대 높이 설정
+
+            // 중앙에 텍스트 배치
+            modalContent.style.display = 'flex';
+            modalContent.style.flexDirection = 'column';
+            modalContent.style.justifyContent = 'center';
+            modalContent.style.alignItems = 'center';
+
+            const modalText = document.createElement('h1');
+            modalText.textContent = content;
+            modalText.style.fontSize = '130px';  // 텍스트 크기 조절
+            modalText.style.margin = 'auto';  // 텍스트를 중앙에 위치시키기 위한 설정
+            modalContent.appendChild(modalText);
+
+            // 닫기 버튼 추가
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '닫기';
+            closeButton.onclick = () => {
+                document.body.removeChild(modal);
+            };
+            modalContent.appendChild(closeButton);
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+
+
+
+    
+        manageEntryAndWaitingList();
+    </script>
+</body>
+</html>
