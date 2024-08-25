@@ -238,6 +238,7 @@
         }
 
 
+
     
         function populateEntryList(entryList) {
             const tbody = document.querySelector(`#entryList tbody`);
@@ -367,12 +368,31 @@
             });
         }
 
-
         function removeWaitingTeam(teamName) {
             // 대기자 명단에서 팀을 제거
             teams = teams.filter(team => team.team !== teamName);
+            
+            // 알림음 재생
+            const audio = new Audio('alarm.mp3');  // 음성 파일의 이름을 정확히 입력
+            audio.play();
+            
             updateLists(); // 리스트 업데이트
         }
+
+
+
+        function removeTeam(teamName) {
+            // 팀을 명단에서 제거
+            teams = teams.filter(team => team.team !== teamName);
+            clearInterval(timers[teamName]);  // 타이머 제거
+
+            // 알림음 재생
+            const audio = new Audio('alarm.mp3');  // 음성 파일의 이름을 정확히 입력
+            audio.play();
+
+            updateLists(); // 리스트 업데이트
+        }
+
 
     
         function manageEntryAndWaitingList() {
@@ -380,35 +400,41 @@
                 const currentTime = new Date();
                 const entryList = teams.slice(0, 5);
                 const waitingList = teams.slice(5);
-    
+
                 if (waitingList.length > 0) {
                     const eligibleEntryTeams = entryList.filter(team => {
                         return currentTime >= team.removalTime;
                     });
-    
+
                     if (eligibleEntryTeams.length > 0) {
                         const teamToMoveOut = eligibleEntryTeams.reduce((prev, current) => {
                             return (current.removalTime > prev.removalTime) ? current : prev;
                         });
-    
+
                         // 입장자 명단에서 해당 팀을 제거
                         teams = teams.filter(team => team !== teamToMoveOut);
-    
+
                         const teamToMoveIn = waitingList.reduce((prev, current) => {
                             return (current.waitTime < prev.waitTime) ? current : prev;
                         });
-    
+
                         // 대기자 명단에서 해당 팀을 제거하고 입장자 명단으로 이동
                         teams = teams.filter(team => team !== teamToMoveIn);
                         teamToMoveIn.entryTime = currentTime;
-                        teamToMoveIn.removalTime = new Date(currentTime.getTime() + 900000); // 15분
+                        teamToMoveIn.removalTime = new Date(currentTime.getTime() + 15000); // 15초
+
+                        // 알림음 재생 (대기자에서 입장자로 이동 시)
+                        const audio = new Audio('alarm.mp3');  // 음성 파일의 이름을 정확히 입력
+                        audio.play();
+
                         teams.splice(teams.indexOf(teams[4]) + 1, 0, teamToMoveIn);
-    
+
                         updateLists();
                     }
                 }
             }, 1000);
         }
+
 
         function showMapPopup(content) {
             // 모달 생성
